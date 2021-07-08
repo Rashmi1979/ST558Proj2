@@ -1,6 +1,6 @@
 ---
 title: "Project2"
-author: "Rashmi Kadam"
+author: "Rashmi Kadam, Dionte Watie"
 date: "7/6/2021"
 output: html_document
 ---
@@ -8,3 +8,32 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+
+# Introduction
+### For this study we will be aiming to predict the number of bike users. The bike users have been split into two groups that will be the target variables (response), casual bikers that rent bikes casually and registered bikers that rent bikes regularly. The predictor variables that will be in question are weekday (day of the week), season, hr (hour of the day), temp (temperature normalized in celsius), holiday (whether it is a holiday or not), and weathersit (weather: rainy, snowy, clear, cloudy). The response and predictor variables will be used in various Multiple Linear Regression Models, Logistics Models, and Tree fits. The models will then be tested against the testing data set and the results will determine which model would be best to use for prediction.
+
+
+```{r}
+library(tidyverse)
+library(readr)
+library(caret)
+library(class)
+library(e1071)
+```
+
+
+
+```{r}
+bikeData <- read_csv("/Users/diontewatie/ST558Proj2/day.csv")
+bikeData <- bikeData %>% select(casual, registered, cnt, weekday, season, temp, holiday, weathersit)
+bikeData
+bikeData$casual <- as.factor(bikeData$casual)
+bikeData$registered <- as.factor(bikeData$registered)
+set.seed(1)
+train <- sample(1:nrow(bikeData), size = nrow(bikeData)*0.7)
+test <- dplyr::setdiff(1:nrow(bikeData), train)
+bikeDataTrain <- bikeData[train, ]
+bikeDataTest <- bikeData[test, ]
+```
+
