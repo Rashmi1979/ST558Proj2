@@ -16,24 +16,33 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(tidyverse)
-library(readr)
-library(caret)
-library(class)
-library(e1071)
+
 ```
 
 
 
 ```{r}
-bikeData <- read_csv("/Users/diontewatie/ST558Proj2/day.csv")
-bikeData <- bikeData %>% select(casual, registered, cnt, weekday, season, temp, holiday, weathersit)
-bikeData
-bikeData$casual <- as.factor(bikeData$casual)
-bikeData$registered <- as.factor(bikeData$registered)
+bikeData <- read_csv("day.csv")
+bikeData <- bikeData %>% select(casual, registered, cnt,mnth, weekday, season, temp, holiday, weathersit)
+
+
+#bikeData$casual <- as.factor(bikeData$casual)
+#bikeData$registered <- as.factor(bikeData$registered)
+#Filtering data for Monday
+mondayData <-bikeData%>%filter(weekday==1)
 set.seed(1)
-train <- sample(1:nrow(bikeData), size = nrow(bikeData)*0.7)
-test <- dplyr::setdiff(1:nrow(bikeData), train)
-bikeDataTrain <- bikeData[train, ]
-bikeDataTest <- bikeData[test, ]
+train <- sample(1:nrow(mondayData), size = nrow(mondayData)*0.7)
+test <- dplyr::setdiff(1:nrow(mondayData), train)
+bikeDataTrain <- mondayData[train, ]
+bikeDataTest <- mondayData[test, ]
+
+bikeDataTrain
+#Graphs
+ggplot(bikeDataTrain,aes(x=mnth, y=cnt)) + geom_point() + geom_smooth()
+ggplot(bikeDataTrain, aes(x = season,y=casual)) +
+geom_bar(stat="identity" ,fill="steelblue")+
+  theme_minimal()
+
+
 ```
 
