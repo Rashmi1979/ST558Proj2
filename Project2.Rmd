@@ -37,12 +37,29 @@ bikeDataTrain <- mondayData[train, ]
 bikeDataTest <- mondayData[test, ]
 
 bikeDataTrain
+
 #Graphs
-ggplot(bikeDataTrain,aes(x=mnth, y=cnt)) + geom_point() + geom_smooth()
+ggplot(bikeDataTrain,aes(x=mnth, y=cnt)) + 
+  geom_point() + 
+  geom_smooth()
+
 ggplot(bikeDataTrain, aes(x = season,y=casual)) +
-geom_bar(stat="identity" ,fill="steelblue")+
+  geom_bar(stat="identity" ,fill="steelblue") +
   theme_minimal()
+```
+
+```{r}
+
+Correlation <- cor(select(bikeDataTrain,casual, registered, cnt,mnth, season, temp, holiday, weathersit))
+#install corrplot library
+library(corrplot)
+
+corrplot(Correlation, type = "upper",
+         tl.pos = "lt")
+corrplot(Correlation, type = "lower", method = "number",
+         add = TRUE, diag = FALSE, tl.pos = "n")
 
 
+corrplot(Correlation)
 ```
 
