@@ -63,3 +63,28 @@ corrplot(Correlation, type = "lower", method = "number",
 corrplot(Correlation)
 ```
 
+
+
+```{r}
+#Summary Statistics
+statsCasual <- bikeDataTrain %>% group_by(mnth) %>% summarise(avg = mean(casual), med = median(casual), var = var(casual), stDev = sd(casual))
+statsCasual
+
+statsRegistered <- bikeDataTrain %>% group_by(mnth) %>% summarise(avg = mean(registered), med = median(registered), var = var(registered), stDev = sd(registered))
+statsRegistered
+
+statsCnt <- bikeDataTrain %>% group_by(season) %>% summarise(avg = mean(cnt), med = median(cnt), var = var(cnt), stDev = sd(cnt))
+statsCnt
+```
+
+
+```{r}
+tapply(bikeDataTrain$casual, INDEX = bikeDataTrain$weathersit, FUN = function(x){x -mean(x)/sd(x)})
+```
+
+
+
+```{r}
+
+```
+
