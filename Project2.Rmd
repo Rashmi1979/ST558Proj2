@@ -11,7 +11,21 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 # Introduction
-### For this study we will be aiming to predict the number of bike users. The bike users have been split into two groups that will be the target variables (response), casual bikers that rent bikes casually and registered bikers that rent bikes regularly. The predictor variables that will be in question are weekday (day of the week), season, hr (hour of the day), temp (temperature normalized in celsius), holiday (whether it is a holiday or not), and weathersit (weather: rainy, snowy, clear, cloudy). The response and predictor variables will be used in various Multiple Linear Regression Models, Logistics Models, and Tree fits. The models will then be tested against the testing data set and the results will determine which model would be best to use for prediction.
+
+For this study we will be aiming to predict the number of bike users. The bike users have been split into two groups that will be the target variables (response), casual bikers that rent bikes casually and registered bikers that rent bikes regularly. The predictor variables that will be in question are:
+
+* weekday (day of the week)
+* season
+* yr (year)
+* temp (temperature normalized in Celsius)
+* holiday (whether it is a holiday or not)
+* weathersit (weather: rainy, snowy, clear, cloudy)
+* mnth
+* atemp 
+* windspeed
+
+
+The response and predictor variables will be used in various Multiple Linear Regression Models, Logistics Models, and Tree fits. The models will then be tested against the testing data set and the results will determine which model would be best to use for prediction.
 
 
 ```{r}
