@@ -16,53 +16,108 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(tidyverse)
-
-```
-
-
-
-```{r}
-bikeData <- read_csv("day.csv")
-bikeData <- bikeData %>% select(casual, registered, cnt,mnth, weekday, season, temp, holiday, weathersit)
-
-
-#bikeData$casual <- as.factor(bikeData$casual)
-#bikeData$registered <- as.factor(bikeData$registered)
-#Filtering data for Monday
-mondayData <-bikeData%>%filter(weekday==1)
-set.seed(1)
-train <- sample(1:nrow(mondayData), size = nrow(mondayData)*0.7)
-test <- dplyr::setdiff(1:nrow(mondayData), train)
-bikeDataTrain <- mondayData[train, ]
-bikeDataTest <- mondayData[test, ]
-
-bikeDataTrain
-
-#Graphs
-ggplot(bikeDataTrain,aes(x=mnth, y=cnt)) + 
-  geom_point() + 
-  geom_smooth()
-
-ggplot(bikeDataTrain, aes(x = season,y=casual)) +
-  geom_bar(stat="identity" ,fill="steelblue") +
-  theme_minimal()
-```
-
-```{r}
-
-Correlation <- cor(select(bikeDataTrain,casual, registered, cnt,mnth, season, temp, holiday, weathersit))
-#install corrplot library
 library(corrplot)
+library(ggplot2)
+library(ggpubr)
 
-corrplot(Correlation, type = "upper",
-         tl.pos = "lt")
-corrplot(Correlation, type = "lower", method = "number",
-         add = TRUE, diag = FALSE, tl.pos = "n")
+```
 
+
+
+```{r}
+set.seed(1)
+
+# read Bike data
+bikeData <- read_csv("day.csv")
+
+```
+```{r}
+
+Correlation <- cor(select(bikeData,casual, registered, cnt, weekday,holiday, mnth, season,  weathersit ,yr, temp, atemp, hum, windspeed))
 
 corrplot(Correlation)
+
+
+#lmBikeData <- lm(cnt~.,data=bikeData)
+#summary(lmBikeData)
+
 ```
 
+```{r}
+#Running the model
+
+bikeDataM <- bikeData %>% filter(weekday==1) %>% select (season, holiday, mnth, weekday, weathersit, atemp, windspeed, casual, registered, cnt, yr)
+
+bikeDataM$mnth <- as.factor(bikeDataM$mnth)
+
+
+bikeDataM$season <- factor(bikeDataM$season,
+                          levels = c("1", "2","3","4") , 
+                          labels = c("Spring","Summer","Fall","Winter"))
+
+table(bikeDataM$season)
+
+bikeDataM$holiday <- factor(bikeDataM$holiday, 
+                           levels = c("0", "1") , 
+                           labels = c("Working Day","Holiday"))
+
+table(bikeDataM$holiday)
+
+bikeDataM$weathersit <- factor(bikeDataM$weathersit,
+                          levels = c("1", "2","3","4") , 
+                          labels = c("Good:Clear/Sunny","Moderate:Cloudy/Mist","Bad: Rain/Snow/Fog",
+                                     "Worse: Heavy Rain/Snow/Fog"))
+table(bikeDataM$weathersit)
+
+bikeDataM$yr <- factor(bikeDataM$yr,
+                      levels = c("0", "1") , 
+                      labels = c("2011","2012"))
+table(bikeDataM$yr)
+
+```
+
+```{r}
+
+train <- sample(1:nrow(bikeDataM), size = nrow(bikeDataM)*0.7)
+test <- dplyr::setdiff(1:nrow(bikeDataM), train)
+bikeDataTrain <- bikeDataM[train, ]
+bikeDataTest <- bikeDataM[test, ]
+
+
+summary(bikeDataTrain)
+
+```
+
+```{r}
+
+  
+Year <- bikeDataTrain$yr
+
+ggplot(bikeDataTrain, aes(fill=Year, y=cnt, x=mnth)) + 
+    geom_bar(position="dodge", stat="identity") + xlab("Months") + ylab('Total Users')
+
+```
+
+
+```{r}
+ggplot(bikeDataTrain, aes(x = season,y=cnt)) +
+  geom_boxplot(fill="steelblue") 
+
+
+```
+
+
+```{r}
+
+
+  #bikeDataTrain$atemp = (bikeDataTrain$atemp * 66) + 16
+
+  cTemp <- ggplot(bikeDataTrain,aes(x=atemp, y=casual)) + geom_point() + geom_smooth() + ylim(0, 7000) 
+  rTemp <- ggplot(bikeDataTrain, aes(x=atemp, y=registered)) + geom_point() + geom_smooth() + ylim(0, 7000) 
+  
+  ggarrange(cTemp, rTemp, labels = c("Casual Users", "Registered Users"), ncol = 2, nrow = 1)
+
+```
 
 
 ```{r}
