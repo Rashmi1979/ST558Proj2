@@ -32,7 +32,7 @@ Following packages are used in this project:
 
 ## Rmakrdown Code [to gererate above reports]
 
-
+```
 days <- c("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday")
 
 weekday <- 0
@@ -47,6 +47,6 @@ for (day in days) {
   weekday = weekday + 1
 }
 
-
+```
 
 
