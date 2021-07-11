@@ -2,11 +2,21 @@
 title: "Project2"
 author: "Rashmi Kadam, Dionte Watie"
 date: "7/6/2021"
-output: html_document
+output:
+  pdf_document:
+    toc: true
+  github_document:
+    toc: true
+  params: 
+    day: day
+    weekday: weekday
 ---
 
 ```{r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_chunk$set(fig.path=paste0(day, "_files/figure-gfm/"))
+
 ```
 
 
@@ -32,7 +42,8 @@ library(tidyverse)
 library(corrplot)
 library(ggplot2)
 library(ggpubr)
-
+library(caret)
+library(randomForest)
 ```
 
 
@@ -148,6 +159,8 @@ cSeason <- ggplot(bikeDataTrain, aes(fill = holiday, x = season,y = casual,)) + 
 ggarrange(cSeason, rSeason, labels= c("Casual Users", "Registered Users"), ncol = 2, nrow = 1)
 
 ```
+
+
 ```{r}
 #Dionte -- Density plot for weathersit by year 
 weather <- ggplot(bikeDataTrain, aes(x= weathersit))
@@ -161,7 +174,7 @@ cntPlot <- ggplot(bikeDataTrain, aes(x= cnt))
 cntPlot + stat_ecdf(geom = 'step', aes(color= Year)) + ylab("ECDF")
 
 
-```
+``` 
 
 
 ```{r}
@@ -292,7 +305,7 @@ plot(bestLinFit)
 Fitting Random forest model
 
 ```{r}
-library(caret)
+
 set.seed(1)
 
 
