@@ -140,19 +140,61 @@ bikeDataTrain$atemp
 
 
 ```{r}
-#Summary Statistics
-statsCasual <- bikeDataTrain %>% group_by(mnth) %>% summarise(avg = mean(casual), med = median(casual), var = var(casual), stDev = sd(casual))
+#Dionte -- bar plots split by casual and registered users for season and holiday
+rSeason <- ggplot(bikeDataTrain, aes(fill = holiday, x = season,y = registered,)) + geom_bar(position= 'dodge',stat = 'identity')
+
+cSeason <- ggplot(bikeDataTrain, aes(fill = holiday, x = season,y = casual,)) + geom_bar(position= 'dodge',stat = 'identity')
+
+ggarrange(cSeason, rSeason, labels= c("Casual Users", "Registered Users"), ncol = 2, nrow = 1)
+
+```
+```{r}
+#Dionte -- Density plot for weathersit by year 
+weather <- ggplot(bikeDataTrain, aes(x= weathersit))
+weather + geom_density(adjust= 0.5, alpha= 0.5, aes(fill= Year), kernel="gaussian")
+
+```
+
+```{r}
+#Dionte -- ECDF plot for count by year
+cntPlot <- ggplot(bikeDataTrain, aes(x= cnt))
+cntPlot + stat_ecdf(geom = 'step', aes(color= Year)) + ylab("ECDF")
+
+
+```
+
+
+```{r}
+#Summary Statistics by Dionte
+#variance, stdev, mean, and median of casual users by month
+statsCasual <- bikeDataTrain %>% 
+  group_by(mnth) %>% 
+  summarise(avg = mean(casual), 
+            med = median(casual), 
+            var = var(casual), 
+            stDev = sd(casual))
 statsCasual
-
-statsRegistered <- bikeDataTrain %>% group_by(mnth) %>% summarise(avg = mean(registered), med = median(registered), var = var(registered), stDev = sd(registered))
+#variance, stdev, mean, and median of registered users by month
+statsRegistered <- bikeDataTrain %>% 
+  group_by(mnth) %>% 
+  summarise(avg = mean(registered), 
+            med = median(registered), 
+            var = var(registered), 
+            stDev = sd(registered))
 statsRegistered
-
-statsCnt <- bikeDataTrain %>% group_by(season) %>% summarise(avg = mean(cnt), med = median(cnt), var = var(cnt), stDev = sd(cnt))
+#variance, stdev, mean, and median of total bike users by season
+statsCnt <- bikeDataTrain %>% 
+  group_by(season) %>% 
+  summarise(avg = mean(cnt), 
+            med = median(cnt), 
+            var = var(cnt), 
+            stDev = sd(cnt))
 statsCnt
 ```
 
 
 ```{r}
+#Calculating z statistic
 tapply(bikeDataTrain$casual, INDEX = bikeDataTrain$weathersit, FUN = function(x){x -mean(x)/sd(x)})
 ```
 
@@ -202,7 +244,7 @@ statsHoliday
 Fitting models
 
 ```{r}
-#Fitting multiple regression model
+#Fitting multiple regression model by Rashimi
 
 lm1<-lm(cnt ~.-registered-casual,data=bikeDataTrain)
 summary(lm1)
@@ -229,6 +271,23 @@ lm5<-lm(log(cnt)~season+weathersit+atemp+yr,data=bikeDataTrain)
 summary(lm5)
 plot(lm5)
 ```
+
+```{r}
+#Fitting Multiple Linear Regression model by Dionte
+#Using BIC to select predictors for the best fit model
+bic_selection = step(
+  lm(cnt ~ 1, bikeDataTrain),
+  scope = cnt ~ season + holiday + mnth + weathersit + atemp + windspeed + Year,
+  direction = "both", k = log(nrow(bikeDataTrain))
+)
+#Best fit linear regression model
+bestLinFit <- lm(cnt ~ atemp + Year + season + weathersit, data = bikeDataTrain)
+bestLinFit
+summary(bestLinFit)
+plot(bestLinFit)
+```
+
+
 
 Fitting Random forest model
 
@@ -259,3 +318,22 @@ postResample(rfPred, bikeDataTest$cnt)
 
 
 ```
+
+Fitted Boosted Tree Model
+
+```{r}
+trCtrl <- trainControl(method = "repeatedcv", number = 10, repeats =3)
+set.seed(1)
+bikeBoostedFit <- train(cnt ~., data = bikeDataTrain,
+                     method = "gbm",
+                     preProcess = c("center", "scale"),
+                     trControl = trCtrl)
+bikeBoostedFit
+
+bikeBoostedFitPred <- predict(bikeBoostedFit, newdata = dplyr::select(bikeDataTest, -cnt))
+bikeBoostedFitPred
+postResample(bikeBoostedFitPred, bikeDataTest$cnt)
+
+
+```
+
