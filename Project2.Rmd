@@ -54,32 +54,29 @@ set.seed(1)
 # read Bike data
 bikeData <- read_csv("day.csv")
 
+# filtering weekday data
+bikeDataWD <- bikeData %>% filter(weekday == 1)
+
 ```
 ```{r}
 
-Correlation <- cor(select(bikeData,casual, registered, cnt, weekday,holiday, mnth, season,  weathersit ,yr, temp, atemp, hum, windspeed))
+Correlation <- cor(select(bikeDataWD, casual, registered, cnt,holiday, mnth, season,  weathersit ,yr, temp, atemp, hum, windspeed))
 
 corrplot(Correlation)
-
-
-#lmBikeData <- lm(cnt~.,data=bikeData)
-#summary(lmBikeData)
 
 ```
 
 ```{r}
 #Running the model
 
-bikeDataM <- bikeData %>% filter(weekday==1) %>% select (season, holiday, mnth, weathersit, atemp, windspeed, casual, registered, cnt, yr)
+bikeDataM <- bikeDataWD %>% select (season, holiday, mnth, weathersit, atemp, windspeed, casual, registered, cnt, yr)
 
+#
 bikeDataM$mnth <- as.factor(bikeDataM$mnth)
-
 
 bikeDataM$season <- factor(bikeDataM$season,
                           levels = c("1", "2","3","4") , 
                           labels = c("Spring","Summer","Fall","Winter"))
-
-table(bikeDataM$season)
 
 bikeDataM$holiday <- factor(bikeDataM$holiday, 
                            levels = c("0", "1") , 
@@ -110,7 +107,7 @@ summary(bikeDataTrain)
 ```
  
 ```{r}
-#Rashmi- side by side bar plots for year, monthand count
+#Rashmi- side by side bar plots for year, month and count
   
 Year <- bikeDataTrain$yr
 
@@ -132,7 +129,6 @@ ggplot(bikeDataTrain, aes(x = season,y=cnt)) +
 
 ```{r}
 #Rashmi-- scatter plots for casual and registered versus actual temperature
-bikeDataTrain$atemp
 
 mintemp <- -16
 maxtemp <- 50
@@ -212,33 +208,24 @@ statsHoliday
 
 Fitting models
 
-```{r}
-#Fitting multiple regression model
+```{r warning=FALSE}
+#Fitting multiple regression models
 
-lm1<-lm(cnt ~.-registered-casual,data=bikeDataTrain)
-summary(lm1)
+bikeDataTrainF <- bikeDataTrain %>% select(cnt,season,weathersit,atemp,yr)
+bikeDataTestF <- bikeDataTest %>% select(cnt,season,weathersit,atemp,yr)
 
-plot(lm1)
+lmRM<-lm(cnt~.,data=bikeDataTrainF)
+summary(lmRM)
 
-#In full model not all variables are significant so,tried removing the month variable 
-#QQplot show long tailed distribution
+lmFit <- train(cnt ~ ., data = bikeDataTrainF , 
+         method = "lm", 
+         preProcess = c("center", "scale"),
+         trControl = trainControl(method = "cv", number = 10))
 
-lm2<-lm(cnt ~.-registered-casual-mnth,data=bikeDataTrain)
-summary(lm2)
-plot(lm2)
-# The variables that are significant in the above model are picked in the lm3
-lm3<-lm(cnt~season+weathersit+atemp+yr,data=bikeDataTrain)
-summary(lm3)
-plot(lm3)
-#non normality in qqplots is managed by doing square-root transformation
-lm4<-lm(sqrt(cnt)~season+weathersit+atemp+yr,data=bikeDataTrain)
-summary(lm4)
-plot(lm4)
+predlm <- predict(lmFit, newdata = dplyr::select(bikeDataTestF,-cnt))
 
+postResample(predlm, bikeDataTestF$cnt)
 
-lm5<-lm(log(cnt)~season+weathersit+atemp+yr,data=bikeDataTrain)
-summary(lm5)
-plot(lm5)
 ```
 
 Fitting Random forest model
@@ -253,20 +240,12 @@ rfFit <- train(cnt ~ .,
                trControl = trainControl(method = "repeatedcv",
                                         repeats = 3,
                                         number = 10),
-               tuneGrid = data.frame(mtry = ncol(bikeDataTrain)/3),
-               data = bikeDataTrain)
-
+               tuneGrid = data.frame(mtry = 1:9),
+               data = bikeDataTrainF)
 rfFit
-rfPred <- predict(rfFit,  newdata = dplyr::select(bikeDataTest,-cnt))
-postResample(rfPred, bikeDataTest$cnt)
 
-
-
-
-#lmFit <- train(price ~ ., data = diamondsTrain,
-#               method = "lm")
-#predlm <- predict(lmFit, newdata = diamondsTest)
-#postResample(predlm, diamondsTest$price)
+rfPred <- predict(rfFit,  newdata = dplyr::select(bikeDataTestF,-cnt))
+postResample(rfPred, bikeDataTestF$cnt)
 
 
 ```
