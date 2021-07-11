@@ -277,7 +277,7 @@ postResample(predlm, bikeDataTestF$cnt)
 
 ```
 
-```{r}
+```{r warning=FALSE}
 #Fitting Multiple Linear Regression model by Dionte
 #Using BIC to select predictors for the best fit model
 bic_selection = step(
@@ -286,10 +286,21 @@ bic_selection = step(
   direction = "both", k = log(nrow(bikeDataTrain))
 )
 #Best fit linear regression model
-bestLinFit <- lm(cnt ~ atemp + Year + season + weathersit, data = bikeDataTrain)
-bestLinFit
-summary(bestLinFit)
-plot(bestLinFit)
+bikeDataTrainF2 <- bikeDataTrain %>% select(cnt, atemp, yr, season,weathersit)
+bikeDataTestF2 <- bikeDataTest %>% select(cnt, atemp, yr, season,weathersit)
+
+bestLm <- lm(cnt ~ atemp + Year + season + weathersit, data = bikeDataTrain)
+bestLm
+summary(bestLm)
+plot(bestLm)
+
+bestLmFit <- train(cnt~., data= bikeDataTrainF2,
+                   method = "lm",
+                   preProcess = c("center", "scale"),
+                   trControl = trainControl(method = "cv", number = 10))
+lmFitPred <- predict(bestLmFit, newdata = dplyr::select(bikeDataTestF2,-cnt))
+
+postResample(lmFitPred, bikeDataTestF2$cnt)
 ```
 
 
@@ -317,7 +328,7 @@ postResample(rfPred, bikeDataTestF$cnt)
 ```
 
 Fitted Boosted Tree Model
-
+The Boosted tree fit model is used on the bike data set to create a model candidate. The training data set was used in the model to find the highest accuracy rate when using the tuning parameters n.trees, interaction.depth, shrinkage, and n.minobsinnode. When the highest rate was chosen given the parameters, it was used for prediction against the testing data set. Finally, the predictions was tested finding the RMSE, Rsquared, and MAE values
 ```{r}
 trCtrl <- trainControl(method = "repeatedcv", number = 10, repeats =3)
 set.seed(1)
