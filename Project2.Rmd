@@ -2,11 +2,21 @@
 title: "Project2"
 author: "Rashmi Kadam, Dionte Watie"
 date: "7/6/2021"
-output: html_document
+output:
+  pdf_document:
+    toc: true
+  github_document:
+    toc: true
+  params: 
+    day: day
+    weekday: weekday
 ---
 
 ```{r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE)
+#knitr::opts_chunk$set(fig.path=paste0(day, "_files/figure-gfm/"))
+
 ```
 
 
@@ -32,7 +42,8 @@ library(tidyverse)
 library(corrplot)
 library(ggplot2)
 library(ggpubr)
-
+library(caret)
+library(randomForest)
 ```
 
 
@@ -233,7 +244,7 @@ plot(lm5)
 Fitting Random forest model
 
 ```{r}
-library(caret)
+
 set.seed(1)
 
 
