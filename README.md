@@ -1,8 +1,3 @@
----
-layout: page
-title: About
-permalink: /readme/
----
 
 
 # ST558Proj2
