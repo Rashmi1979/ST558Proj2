@@ -283,7 +283,7 @@ lmRMSE
 
 
 ```{r warning=FALSE}
-#Fitting Multiple Linear Regression model by Dionte
+#Fitting Multiple Linear Regression model
 #Using BIC to select predictors for the best fit model
 set.seed(1)
 
