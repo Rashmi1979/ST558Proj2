@@ -1,7 +1,7 @@
 
 # This file generates Analysis reports for every day.
 
-days <- c("Sunday")#,"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday")
+days <- c("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday")
 
 weekday <- 0
 
