@@ -20,6 +20,8 @@ knitr::opts_chunk$set(fig.path=paste0(day, "_files/figure-gfm/"))
 
 ### Introduction
 
+*Bike Data Analysis for `r day`*
+
 For this study we will be aiming to predict the number of bike users. The bike users have been split into two groups that will be the target variables (response), casual bikers that rent bikes casually and registered bikers that rent bikes regularly. The predictor variables that will be in question are:
 
 * weekday (day of the week)
@@ -54,7 +56,7 @@ set.seed(1)
 bikeData <- read_csv("day.csv")
 
 # filtering weekday data
-bikeDataWD <- bikeData %>% filter(weekday == 1)
+bikeDataWD <- bikeData %>% filter(weekday == weekday)
 
 # Correlation graph has been used to select the predictors
 Correlation <- cor(select(bikeDataWD, casual, registered, cnt,holiday, mnth, season,  weathersit ,yr, temp, atemp, hum, windspeed))
@@ -257,6 +259,7 @@ Idea of linear regression model -Linear regression model assumes a linear relati
 
 ```{r warning=FALSE}
 #Fitting multiple regression models
+set.seed(1)
 
 bikeDataTrainF <- bikeDataTrain %>% select(cnt,season,weathersit,atemp,yr)
 bikeDataTestF <- bikeDataTest %>% select(cnt,season,weathersit,atemp,yr)
@@ -282,6 +285,8 @@ lmRMSE
 ```{r warning=FALSE}
 #Fitting Multiple Linear Regression model by Dionte
 #Using BIC to select predictors for the best fit model
+set.seed(1)
+
 bic_selection = step(
   lm(cnt ~ 1, bikeDataTrain),
   scope = cnt ~ season + holiday + mnth + weathersit + atemp + windspeed + Year,
@@ -344,6 +349,8 @@ rfRMSE
 The Boosted tree fit model is used on the bike data set to create a model candidate. The training data set was used in the model to find the highest accuracy rate when using the tuning parameters n.trees, interaction.depth, shrinkage, and n.minobsinnode. When the highest rate was chosen given the parameters, it was used for prediction against the testing data set. Finally, the predictions was tested finding the RMSE, Rsquared, and MAE values
 
 ```{r warning=FALSE}
+set.seed(1)
+
 trCtrl <- trainControl(method = "repeatedcv", number = 10, repeats =3)
 set.seed(1)
 BoostFit <- train(cnt ~., data = bikeDataTrain,
