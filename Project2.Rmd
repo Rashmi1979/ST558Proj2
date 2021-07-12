@@ -147,7 +147,7 @@ bikeDataTrain$atemp
 
 
 ```{r}
-#Dionte -- bar plots split by casual and registered users for season and holiday
+#Bar plots split by casual and registered users for season and holiday
 rSeason <- ggplot(bikeDataTrain, aes(fill = holiday, x = season,y = registered,)) + geom_bar(position= 'dodge',stat = 'identity')
 
 cSeason <- ggplot(bikeDataTrain, aes(fill = holiday, x = season,y = casual,)) + geom_bar(position= 'dodge',stat = 'identity')
@@ -158,14 +158,14 @@ ggarrange(cSeason, rSeason, labels= c("Casual Users", "Registered Users"), ncol 
 
 
 ```{r}
-#Dionte -- Density plot for weathersit by year 
+#Density plot for weathersit by year 
 weather <- ggplot(bikeDataTrain, aes(x= weathersit))
 weather + geom_density(adjust= 0.5, alpha= 0.5, aes(fill= Year), kernel="gaussian")
 
 ```
 
 ```{r}
-#Dionte -- ECDF plot for count by year
+#ECDF plot for count by year
 cntPlot <- ggplot(bikeDataTrain, aes(x= cnt))
 cntPlot + stat_ecdf(geom = 'step', aes(color= Year)) + ylab("ECDF")
 
@@ -253,7 +253,7 @@ table(bikeDataTrain$holiday, bikeDataTrain$season)
 
 ### Linear Regresion Model
 
-Idea of linear regression model -Linear regression model assumes a linear relationship between the input variables (x) and the single output variable(y).The linear equation assigns one scale factor to each input value or column, called a coefficient and represented by the capital Greek letter Beta (B). It is a slope term.Regression models estimate the values of Beta. Betas are chosen by using ordianry least square method.Ordinary least squares  minimize the sum of squared residuals assuming normality and constant variance on error terms.It is called linear regression because it is linear in parameters.
+Idea of linear regression model -Linear regression model assumes a linear relationship between the input variables (x) and the single output variable(y).The linear equation assigns one scale factor to each input value or column, called a coefficient and represented by the capital Greek letter Beta (B). It is a slope term.Regression models estimate the values of Beta. Betas are chosen by using ordinary least square method.Ordinary least squares  minimize the sum of squared residuals assuming normality and constant variance on error terms.It is called linear regression because it is linear in parameters.
 
 ```{r warning=FALSE}
 #Fitting multiple regression models
