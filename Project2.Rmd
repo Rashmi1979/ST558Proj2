@@ -55,8 +55,11 @@ set.seed(1)
 # read Bike data
 bikeData <- read_csv("day.csv")
 
+wnum <- weekday
+wnum
+
 # filtering weekday data
-bikeDataWD <- bikeData %>% filter(weekday == weekday)
+bikeDataWD <- bikeData %>% filter(weekday == wnum)
 
 # Correlation graph has been used to select the predictors
 Correlation <- cor(select(bikeDataWD, casual, registered, cnt,holiday, mnth, season,  weathersit ,yr, temp, atemp, hum, windspeed))
@@ -287,11 +290,11 @@ lmRMSE
 #Using BIC to select predictors for the best fit model
 set.seed(1)
 
-bic_selection = step(
-  lm(cnt ~ 1, bikeDataTrain),
-  scope = cnt ~ season + holiday + mnth + weathersit + atemp + windspeed + Year,
-  direction = "both", k = log(nrow(bikeDataTrain))
-)
+#bic_selection = step(
+#  lm(cnt ~ 1, bikeDataTrain),
+#  scope = cnt ~ season + holiday + mnth + weathersit + atemp + windspeed + Year,
+#  direction = "both", k = log(nrow(bikeDataTrain))
+#)
 #Best fit linear regression model
 bikeDataTrainF2 <- bikeDataTrain %>% select(cnt, atemp, season,weathersit)
 bikeDataTestF2 <- bikeDataTest %>% select(cnt, atemp, season,weathersit)

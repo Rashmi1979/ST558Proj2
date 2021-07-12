@@ -10,6 +10,8 @@ Rashmi Kadam, Dionte Watie
 
 ### Introduction
 
+*Bike Data Analysis for Wednesday*
+
 For this study we will be aiming to predict the number of bike users.
 The bike users have been split into two groups that will be the target
 variables (response), casual bikers that rent bikes casually and
@@ -22,7 +24,7 @@ that will be in question are:
 -   holiday (whether it is a holiday or not)
 -   weathersit (weather: rainy, snowy, clear, cloudy)
 -   mnth
--   atemp
+-   atemp (Feeling temperature)
 -   windspeed
 
 The response and predictor variables will be used in various Multiple
@@ -47,7 +49,7 @@ bikeData <- read_csv("day.csv")
 ```
 
     ## 
-    ## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    ## ── Column specification ─────────────────────────────────────────────────────────────────────────
     ## cols(
     ##   instant = col_double(),
     ##   dteday = col_date(format = ""),
@@ -68,8 +70,15 @@ bikeData <- read_csv("day.csv")
     ## )
 
 ``` r
+wnum <- weekday
+wnum
+```
+
+    ## [1] 3
+
+``` r
 # filtering weekday data
-bikeDataWD <- bikeData %>% filter(weekday == 1)
+bikeDataWD <- bikeData %>% filter(weekday == wnum)
 
 # Correlation graph has been used to select the predictors
 Correlation <- cor(select(bikeDataWD, casual, registered, cnt,holiday, mnth, season,  weathersit ,yr, temp, atemp, hum, windspeed))
@@ -118,21 +127,21 @@ bikeDataTest <- bikeDataM[test, ]
 summary(bikeDataTrain)
 ```
 
-    ##     season          holiday        mnth                         weathersit     atemp          windspeed          casual      
-    ##  Spring:13   Working Day:64   5      : 8   Good:Clear/Sunny          :46   Min.   :0.1509   Min.   :0.0423   Min.   :   2.0  
-    ##  Summer:21   Holiday    : 9   8      : 8   Moderate:Cloudy/Mist      :26   1st Qu.:0.3876   1st Qu.:0.1312   1st Qu.: 342.0  
-    ##  Fall  :20                    10     : 8   Bad: Rain/Snow/Fog        : 1   Median :0.5392   Median :0.1835   Median : 713.0  
-    ##  Winter:19                    6      : 7   Worse: Heavy Rain/Snow/Fog: 0   Mean   :0.4948   Mean   :0.1893   Mean   : 701.5  
-    ##                               9      : 7                                   3rd Qu.:0.6149   3rd Qu.:0.2338   3rd Qu.: 998.0  
-    ##                               12     : 7                                   Max.   :0.7298   Max.   :0.4179   Max.   :2557.0  
-    ##                               (Other):28                                                                                     
-    ##    registered        cnt          yr    
-    ##  Min.   :  20   Min.   :  22   2011:34  
-    ##  1st Qu.:3143   1st Qu.:3422   2012:39  
-    ##  Median :3729   Median :4548            
-    ##  Mean   :3813   Mean   :4514            
-    ##  3rd Qu.:5050   3rd Qu.:5936            
-    ##  Max.   :6435   Max.   :7525            
+    ##     season          holiday        mnth                         weathersit     atemp       
+    ##  Spring:13   Working Day:71   5      : 8   Good:Clear/Sunny          :47   Min.   :0.1193  
+    ##  Summer:20   Holiday    : 1   6      : 8   Moderate:Cloudy/Mist      :21   1st Qu.:0.3655  
+    ##  Fall  :20                    9      : 8   Bad: Rain/Snow/Fog        : 4   Median :0.5413  
+    ##  Winter:19                    10     : 8   Worse: Heavy Rain/Snow/Fog: 0   Mean   :0.5000  
+    ##                               7      : 6                                   3rd Qu.:0.6171  
+    ##                               8      : 6                                   Max.   :0.7469  
+    ##                               (Other):28                                                   
+    ##    windspeed          casual         registered        cnt          yr    
+    ##  Min.   :0.0622   Min.   :   9.0   Min.   : 432   Min.   : 441   2011:34  
+    ##  1st Qu.:0.1348   1st Qu.: 292.5   1st Qu.:3324   1st Qu.:3794   2012:38  
+    ##  Median :0.1726   Median : 589.5   Median :4160   Median :4806            
+    ##  Mean   :0.1843   Mean   : 590.3   Mean   :4253   Mean   :4843            
+    ##  3rd Qu.:0.2177   3rd Qu.: 789.8   3rd Qu.:5424   3rd Qu.:6343            
+    ##  Max.   :0.4154   Max.   :2562.0   Max.   :6946   Max.   :8173            
     ## 
 
 ``` r
@@ -165,12 +174,14 @@ bikeDataTrain$atemp = bikeDataTrain$atemp * (maxtemp - mintemp) + mintemp
 bikeDataTrain$atemp
 ```
 
-    ##  [1] 14.166422 19.833314 29.541122 -0.957742  2.541578  4.332950 27.708764 22.959536  0.333614 28.833800 10.291100 21.334022 30.334508
-    ## [14]  8.790986 23.740580 21.333164 17.165858 26.124764  7.500158  9.582128 24.667022 30.876236 24.125228 14.207936 13.000400 17.707850
-    ## [27] 18.958550 20.333792 32.167064 27.166772 27.209408 10.499000  9.875036 22.166678 23.292836 31.792250 22.876772 14.082536 27.167564
-    ## [40]  4.041428 23.709164 30.416678  1.087400 -6.041392 10.457486 19.166978 28.292072 14.333072 23.333822 -3.499270 24.585050 -3.416242
-    ## [53] 19.583900 12.215858 25.042628 20.293400  4.825310  0.652064  3.874250  5.912000 21.917000 25.292636  0.999884 16.348052 18.791372
-    ## [66] 19.833050  6.374264 27.541586 30.459050 -1.249858 12.747950 20.501300 19.959572
+    ##  [1] 15.207836  9.582128 27.167564  7.207514 12.249122  2.124986 27.166442 24.625772  2.666186
+    ## [10] 24.334514  4.869200 22.584392 32.334242  2.583158 25.375400 21.624950 19.666664 25.625672
+    ## [19]  9.748778 23.542778 28.000286 24.333986 19.501136 20.875586 17.913968 20.335178 18.792428
+    ## [28] 29.500664 26.292272 25.042364  3.624308 18.791108 19.791272 29.792714 33.208478 21.960428
+    ## [37]  3.124292 26.917886 -6.477322 22.791764 29.208878  6.582692 -5.408782 10.999214 10.706900
+    ## [46] 31.583822 20.208722 23.376458 -0.868180 14.164508  2.166764 17.207372 19.207700 32.000414
+    ## [55] 23.334350  2.478284 -8.123758 15.040922  8.217380 21.959372 19.919114  3.625100  4.540586
+    ## [64] 20.499650 18.169322  7.832600 24.333722 33.292100 -1.458022 12.248792 30.792878 31.584350
 
 ``` r
   cTemp <- ggplot(bikeDataTrain,aes(x=atemp, y=casual)) + geom_point() + geom_smooth() + ylim(0, 7000) 
@@ -185,7 +196,7 @@ bikeDataTrain$atemp
 ![](Wednesday_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
-#Dionte -- bar plots split by casual and registered users for season and holiday
+#Bar plots split by casual and registered users for season and holiday
 rSeason <- ggplot(bikeDataTrain, aes(fill = holiday, x = season,y = registered,)) + geom_bar(position= 'dodge',stat = 'identity')
 
 cSeason <- ggplot(bikeDataTrain, aes(fill = holiday, x = season,y = casual,)) + geom_bar(position= 'dodge',stat = 'identity')
@@ -196,7 +207,7 @@ ggarrange(cSeason, rSeason, labels= c("Casual Users", "Registered Users"), ncol 
 ![](Wednesday_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ``` r
-#Dionte -- Density plot for weathersit by year 
+#Density plot for weathersit by year 
 weather <- ggplot(bikeDataTrain, aes(x= weathersit))
 weather + geom_density(adjust= 0.5, alpha= 0.5, aes(fill= Year), kernel="gaussian")
 ```
@@ -204,7 +215,7 @@ weather + geom_density(adjust= 0.5, alpha= 0.5, aes(fill= Year), kernel="gaussia
 ![](Wednesday_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 ``` r
-#Dionte -- ECDF plot for count by year
+#ECDF plot for count by year
 cntPlot <- ggplot(bikeDataTrain, aes(x= cnt))
 cntPlot + stat_ecdf(geom = 'step', aes(color= Year)) + ylab("ECDF")
 ```
@@ -224,20 +235,20 @@ statsCasual
 ```
 
     ## # A tibble: 12 x 5
-    ##    mnth    avg   med     var stDev
-    ##    <fct> <dbl> <dbl>   <dbl> <dbl>
-    ##  1 1      146.  120    6986.  83.6
-    ##  2 2      141.  120    3569.  59.7
-    ##  3 3      473   359  104611  323. 
-    ##  4 4      796.  754. 142816. 378. 
-    ##  5 5     1068.  842. 480099. 693. 
-    ##  6 6      874.  863   41578. 204. 
-    ##  7 7      948.  951   24216. 156. 
-    ##  8 8      955.  918.  36746. 192. 
-    ##  9 9      920. 1001   52844. 230. 
-    ## 10 10     657.  706  202861. 450. 
-    ## 11 11     358   373    5093   71.4
-    ## 12 12     343.  329   19089. 138.
+    ##    mnth     avg   med     var stDev
+    ##    <fct>  <dbl> <dbl>   <dbl> <dbl>
+    ##  1 1       80.6   92    1059.  32.5
+    ##  2 2      137.   141    6816.  82.6
+    ##  3 3      495.   321  194604. 441. 
+    ##  4 4      604    547   78624  280. 
+    ##  5 5      665    704.  45039. 212. 
+    ##  6 6      846    820.  53381. 231. 
+    ##  7 7     1185.   887  522416. 723. 
+    ##  8 8      914.   916.  45354. 213. 
+    ##  9 9      655.   717   79283. 282. 
+    ## 10 10     520.   489   53461. 231. 
+    ## 11 11     293.   316.   6722.  82.0
+    ## 12 12     224.   282.  18320. 135.
 
 ``` r
 #variance, stdev, mean, and median of registered users by month
@@ -253,18 +264,18 @@ statsRegistered
     ## # A tibble: 12 x 5
     ##    mnth    avg   med      var stDev
     ##    <fct> <dbl> <dbl>    <dbl> <dbl>
-    ##  1 1     1713. 1707   216863.  466.
-    ##  2 2     2208. 1705   943432.  971.
-    ##  3 3     2651  1806  2457901  1568.
-    ##  4 4     3918. 4014  1351846. 1163.
-    ##  5 5     3463. 3462   737931.  859.
-    ##  6 6     4715. 4446  1042289. 1021.
-    ##  7 7     4908. 5447  1242597. 1115.
-    ##  8 8     4720. 4714. 1183422. 1088.
-    ##  9 9     4660. 4023  2610589. 1616.
-    ## 10 10    3404. 3546. 2301021. 1517.
-    ## 11 11    4391. 4750   484608.  696.
-    ## 12 12    3137  3143  3731650. 1932.
+    ##  1 1     2056  2085   662114   814.
+    ##  2 2     2492. 1897  1798460. 1341.
+    ##  3 3     2851. 1871  4615492. 2148.
+    ##  4 4     4132. 4020  1804690. 1343.
+    ##  5 5     4571. 4366  1917225. 1385.
+    ##  6 6     4914. 4875  1418011. 1191.
+    ##  7 7     5019. 4878. 1718847. 1311.
+    ##  8 8     4817. 4276. 1199149. 1095.
+    ##  9 9     5013. 5209  3765768. 1941.
+    ## 10 10    4741. 4707  4115782. 2029.
+    ## 11 11    4323  4262.  533266.  730.
+    ## 12 12    3396. 3744. 4058192. 2014.
 
 ``` r
 #variance, stdev, mean, and median of total bike users by season
@@ -280,10 +291,10 @@ statsCnt
     ## # A tibble: 4 x 5
     ##   season   avg   med      var stDev
     ##   <fct>  <dbl> <dbl>    <dbl> <dbl>
-    ## 1 Spring 2204  1951  1311022. 1145.
-    ## 2 Summer 4709. 4401  1812687. 1346.
-    ## 3 Fall   5716. 6378. 1727193. 1314.
-    ## 4 Winter 4615. 4630  2251352. 1500.
+    ## 1 Spring 2498. 2192  2179554. 1476.
+    ## 2 Summer 5067. 5079  2769411. 1664.
+    ## 3 Fall   5858. 5422. 2817974. 1679.
+    ## 4 Winter 5144. 5260  2703580. 1644.
 
 ``` r
 #Calculating z statistic
@@ -291,17 +302,20 @@ tapply(bikeDataTrain$casual, INDEX = bikeDataTrain$weathersit, FUN = function(x)
 ```
 
     ## $`Good:Clear/Sunny`
-    ##  [1]  697.45676  732.45676 1133.45676   92.45676  258.45676  376.45676 1205.45676 2555.45676  206.45676  902.45676  688.45676 1116.45676
-    ## [13]  999.45676  831.45676  360.45676  773.45676  727.45676  711.45676  771.45676  721.45676 1137.45676  987.45676 1069.45676 1086.45676
-    ## [25]  553.45676  118.45676  861.45676  844.45676   39.45676  371.45676 1547.45676  836.45676  118.45676 1196.45676  215.45676 1206.45676
-    ## [37]  671.45676  428.45676  242.45676  357.45676  771.45676  220.45676  251.45676 1512.45676  335.45676  839.45676
+    ##  [1]  411.35876 1381.35876  139.35876 1196.35876  738.35876  216.35876 2560.35876  371.35876
+    ##  [9]  645.35876 1048.35876  786.35876  947.35876  368.35876  666.35876  686.35876  665.35876
+    ## [17]  793.35876  746.35876 1075.35876 1092.35876  557.35876 1025.35876  659.35876  797.35876
+    ## [25]  196.35876  973.35876  767.35876  882.35876  331.35876   23.35876  303.35876  995.35876
+    ## [33]  785.35876   80.35876  107.35876  778.35876 1056.35876  674.35876  989.35876  253.35876
+    ## [41]  653.35876  186.35876 1171.35876  642.35876  329.35876  830.35876  870.35876
     ## 
     ## $`Moderate:Cloudy/Mist`
-    ##  [1]  833.988  103.988  627.988  446.988  871.988 1230.988  662.988  688.988  209.988  327.988  696.988  681.988  995.988  171.988
-    ## [15]  844.988 1023.988  757.988  339.988  192.988 1233.988 1005.988 1014.988  436.988  326.988 1019.988  650.988
+    ##  [1] 402.19878 105.19878 324.19878  90.19878 743.19878 764.19878 726.19878 537.19878 534.19878
+    ## [10] 308.19878 478.19878  51.19878 253.19878 511.19878 345.19878  93.19878 319.19878 545.19878
+    ## [19] 166.19878 618.19878 417.19878
     ## 
     ## $`Bad: Rain/Snow/Fog`
-    ## [1] NA
+    ## [1] 252.639202 116.639202 215.639202   7.639202
     ## 
     ## $`Worse: Heavy Rain/Snow/Fog`
     ## NULL
@@ -323,10 +337,10 @@ statsAtemp
     ## # A tibble: 4 x 6
     ##   season atemp.min atemp.max atemp.med atemp.stdev atemp.mean
     ##   <fct>      <dbl>     <dbl>     <dbl>       <dbl>      <dbl>
-    ## 1 Spring     -6.04      14.3     0.652        5.75       2.02
-    ## 2 Summer      1.00      28.8    21.3          7.11      20.0 
-    ## 3 Fall       19.0       32.2    27.2          3.87      26.6 
-    ## 4 Winter      2.54      22.9    12.7          5.51      12.5
+    ## 1 Spring     -8.12      20.2      2.48        7.91       2.90
+    ## 2 Summer      3.63      32.0     21.2         7.33      20.5 
+    ## 3 Fall       19.7       33.3     27.0         4.19      26.8 
+    ## 4 Winter      2.12      23.5     12.2         7.57      12.7
 
 ``` r
 #min max stdev and mean of total bike users per year
@@ -344,8 +358,8 @@ statsYear
     ## # A tibble: 2 x 6
     ##   yr    cnt.min cnt.max cnt.med cnt.stdev cnt.mean
     ##   <fct>   <dbl>   <dbl>   <dbl>     <dbl>    <dbl>
-    ## 1 2011     1317    5117   4080.     1143.    3689.
-    ## 2 2012       22    7525   5875      1907.    5234.
+    ## 1 2011     1162    5180   3900.     1234.    3536 
+    ## 2 2012      441    8173   6262.     1766.    6013.
 
 ``` r
 #min max stdev and mean of total bike users per holiday
@@ -363,8 +377,8 @@ statsHoliday
     ## # A tibble: 2 x 6
     ##   holiday     cnt.min cnt.max cnt.med cnt.stdev cnt.mean
     ##   <fct>         <dbl>   <dbl>   <dbl>     <dbl>    <dbl>
-    ## 1 Working Day      22    7525    4559     1754.    4586.
-    ## 2 Holiday        1317    6370    4098     1869.    4003.
+    ## 1 Working Day     441    8173    4785     1961.    4807.
+    ## 2 Holiday        7403    7403    7403       NA     7403
 
 ``` r
 #contingency table 
@@ -374,8 +388,8 @@ table(bikeDataTrain$holiday, bikeDataTrain$season)
 
     ##              
     ##               Spring Summer Fall Winter
-    ##   Working Day     10     18   19     17
-    ##   Holiday          3      3    1      2
+    ##   Working Day     13     20   19     19
+    ##   Holiday          0      0    1      0
 
 ### Linear Regresion Model
 
@@ -384,13 +398,14 @@ linear relationship between the input variables (x) and the single
 output variable(y).The linear equation assigns one scale factor to each
 input value or column, called a coefficient and represented by the
 capital Greek letter Beta (B). It is a slope term.Regression models
-estimate the values of Beta. Betas are chosen by using ordianry least
+estimate the values of Beta. Betas are chosen by using ordinary least
 square method.Ordinary least squares minimize the sum of squared
 residuals assuming normality and constant variance on error terms.It is
 called linear regression because it is linear in parameters.
 
 ``` r
 #Fitting multiple regression models
+set.seed(1)
 
 bikeDataTrainF <- bikeDataTrain %>% select(cnt,season,weathersit,atemp,yr)
 bikeDataTestF <- bikeDataTest %>% select(cnt,season,weathersit,atemp,yr)
@@ -405,24 +420,24 @@ summary(lmRM)
     ## 
     ## Residuals:
     ##      Min       1Q   Median       3Q      Max 
-    ## -0.85928 -0.08404  0.01213  0.08910  0.50083 
+    ## -0.81558 -0.10249  0.01978  0.13244  0.32455 
     ## 
     ## Coefficients:
     ##                                 Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                     7.352991   0.062935 116.834  < 2e-16 ***
-    ## seasonSummer                    0.471608   0.107152   4.401 4.09e-05 ***
-    ## seasonFall                      0.509848   0.128821   3.958  0.00019 ***
-    ## seasonWinter                    0.687224   0.087337   7.869 5.00e-11 ***
-    ## weathersitModerate:Cloudy/Mist -0.110147   0.053612  -2.055  0.04395 *  
-    ## weathersitBad: Rain/Snow/Fog   -5.642216   0.211623 -26.662  < 2e-16 ***
-    ## atemp                           0.021173   0.004315   4.907 6.51e-06 ***
-    ## yr2012                          0.417790   0.050510   8.272 9.62e-12 ***
+    ## (Intercept)                     7.518681   0.065948 114.009  < 2e-16 ***
+    ## seasonSummer                    0.276688   0.094259   2.935  0.00462 ** 
+    ## seasonFall                      0.308639   0.109089   2.829  0.00622 ** 
+    ## seasonWinter                    0.570279   0.078680   7.248 6.82e-10 ***
+    ## weathersitModerate:Cloudy/Mist -0.124118   0.055793  -2.225  0.02964 *  
+    ## weathersitBad: Rain/Snow/Fog   -0.997421   0.104924  -9.506 7.46e-14 ***
+    ## atemp                           0.024167   0.003541   6.825 3.78e-09 ***
+    ## yr2012                          0.418598   0.047148   8.878 9.23e-13 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.2027 on 65 degrees of freedom
-    ## Multiple R-squared:  0.9375, Adjusted R-squared:  0.9308 
-    ## F-statistic: 139.3 on 7 and 65 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.196 on 64 degrees of freedom
+    ## Multiple R-squared:  0.881,  Adjusted R-squared:  0.868 
+    ## F-statistic: 67.72 on 7 and 64 DF,  p-value: < 2.2e-16
 
 ``` r
 lmFit <- train(log(cnt) ~ ., data = bikeDataTrainF , 
@@ -440,84 +455,18 @@ lmRMSE
 ```
 
     ##     RMSE 
-    ## 4316.115
+    ## 4376.026
 
 ``` r
-#Fitting Multiple Linear Regression model by Dionte
+#Fitting Multiple Linear Regression model
 #Using BIC to select predictors for the best fit model
-bic_selection = step(
-  lm(cnt ~ 1, bikeDataTrain),
-  scope = cnt ~ season + holiday + mnth + weathersit + atemp + windspeed + Year,
-  direction = "both", k = log(nrow(bikeDataTrain))
-)
-```
+set.seed(1)
 
-    ## Start:  AIC=1094.85
-    ## cnt ~ 1
-    ## 
-    ##              Df Sum of Sq       RSS    AIC
-    ## + atemp       1  93771938 130795517 1059.7
-    ## + season      3  99240431 125327024 1065.2
-    ## + Year        1  43334121 181233334 1083.5
-    ## <none>                    224567456 1094.8
-    ## + weathersit  2  21164155 203403301 1096.2
-    ## + mnth       11 102377151 122190305 1097.6
-    ## + windspeed   1   2859835 221707621 1098.2
-    ## + holiday     1   2689552 221877903 1098.3
-    ## 
-    ## Step:  AIC=1059.69
-    ## cnt ~ atemp
-    ## 
-    ##              Df Sum of Sq       RSS    AIC
-    ## + Year        1  47589914  83205604 1031.0
-    ## + weathersit  2  17784930 113010588 1057.6
-    ## <none>                    130795517 1059.7
-    ## + windspeed   1   3849193 126946325 1061.8
-    ## + season      3  16603083 114192434 1062.7
-    ## + holiday     1   1411585 129383932 1063.2
-    ## - atemp       1  93771938 224567456 1094.8
-    ## + mnth       11  16809749 113985768 1096.8
-    ## 
-    ## Step:  AIC=1030.96
-    ## cnt ~ atemp + Year
-    ## 
-    ##              Df Sum of Sq       RSS    AIC
-    ## + weathersit  2  25984530  57221074 1012.2
-    ## + windspeed   1   7062737  76142867 1028.8
-    ## + season      3  15128635  68076969 1029.2
-    ## <none>                     83205604 1031.0
-    ## + holiday     1   1660244  81545360 1033.8
-    ## - Year        1  47589914 130795517 1059.7
-    ## + mnth       11  15182560  68023044 1063.4
-    ## - atemp       1  98027731 181233334 1083.5
-    ## 
-    ## Step:  AIC=1012.21
-    ## cnt ~ atemp + Year + weathersit
-    ## 
-    ##              Df Sum of Sq       RSS     AIC
-    ## + season      3  23936749  33284325  985.52
-    ## <none>                     57221074 1012.21
-    ## + windspeed   1   2930596  54290478 1012.66
-    ## + holiday     1   2926969  54294105 1012.66
-    ## + mnth       11  22620307  34600768 1022.68
-    ## - weathersit  2  25984530  83205604 1030.96
-    ## - Year        1  55789514 113010588 1057.60
-    ## - atemp       1  94154498 151375572 1078.93
-    ## 
-    ## Step:  AIC=985.52
-    ## cnt ~ atemp + Year + weathersit + season
-    ## 
-    ##              Df Sum of Sq      RSS     AIC
-    ## <none>                    33284325  985.52
-    ## + holiday     1   1178529 32105797  987.18
-    ## + windspeed   1    197242 33087083  989.38
-    ## - atemp       1  13790259 47074585 1006.54
-    ## - season      3  23936749 57221074 1012.21
-    ## + mnth       11   7339288 25945038 1014.53
-    ## - weathersit  2  34792644 68076969 1029.18
-    ## - Year        1  58074847 91359172 1054.94
-
-``` r
+#bic_selection = step(
+#  lm(cnt ~ 1, bikeDataTrain),
+#  scope = cnt ~ season + holiday + mnth + weathersit + atemp + windspeed + Year,
+#  direction = "both", k = log(nrow(bikeDataTrain))
+#)
 #Best fit linear regression model
 bikeDataTrainF2 <- bikeDataTrain %>% select(cnt, atemp, season,weathersit)
 bikeDataTestF2 <- bikeDataTest %>% select(cnt, atemp, season,weathersit)
@@ -531,10 +480,12 @@ bestLm
     ## lm(formula = cnt ~ atemp + season + weathersit, data = bikeDataTrain)
     ## 
     ## Coefficients:
-    ##                    (Intercept)                           atemp                    seasonSummer                      seasonFall  
-    ##                        2029.99                           72.71                         1171.98                         1713.22  
-    ##                   seasonWinter  weathersitModerate:Cloudy/Mist    weathersitBad: Rain/Snow/Fog  
-    ##                        1888.65                          116.35                        -4841.91
+    ##                    (Intercept)                           atemp                    seasonSummer  
+    ##                        2887.58                           79.56                          971.18  
+    ##                     seasonFall                    seasonWinter  weathersitModerate:Cloudy/Mist  
+    ##                        1055.15                         1900.43                         -938.76  
+    ##   weathersitBad: Rain/Snow/Fog  
+    ##                       -3367.17
 
 ``` r
 summary(bestLm)
@@ -545,24 +496,24 @@ summary(bestLm)
     ## lm(formula = cnt ~ atemp + season + weathersit, data = bikeDataTrain)
     ## 
     ## Residuals:
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2347.6  -795.0  -243.7   908.4  2269.2 
+    ##      Min       1Q   Median       3Q      Max 
+    ## -2259.34 -1161.25   -39.09  1087.33  2206.86 
     ## 
     ## Coefficients:
     ##                                Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                     2029.99     338.35   6.000 9.27e-08 ***
-    ## atemp                             72.71      25.02   2.906 0.004978 ** 
-    ## seasonSummer                    1171.98     621.75   1.885 0.063839 .  
-    ## seasonFall                      1713.22     747.30   2.293 0.025070 *  
-    ## seasonWinter                    1888.65     506.58   3.728 0.000403 ***
-    ## weathersitModerate:Cloudy/Mist   116.35     295.78   0.393 0.695328    
-    ## weathersitBad: Rain/Snow/Fog   -4841.91    1214.16  -3.988 0.000169 ***
+    ## (Intercept)                     2887.58     404.05   7.147 9.55e-10 ***
+    ## atemp                             79.56      23.51   3.384 0.001214 ** 
+    ## seasonSummer                     971.18     625.20   1.553 0.125186    
+    ## seasonFall                      1055.15     724.29   1.457 0.149981    
+    ## seasonWinter                    1900.43     520.83   3.649 0.000526 ***
+    ## weathersitModerate:Cloudy/Mist  -938.76     368.38  -2.548 0.013195 *  
+    ## weathersitBad: Rain/Snow/Fog   -3367.17     688.37  -4.892 6.90e-06 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 1177 on 66 degrees of freedom
-    ## Multiple R-squared:  0.5932, Adjusted R-squared:  0.5562 
-    ## F-statistic: 16.04 on 6 and 66 DF,  p-value: 2.81e-11
+    ## Residual standard error: 1301 on 65 degrees of freedom
+    ## Multiple R-squared:  0.601,  Adjusted R-squared:  0.5641 
+    ## F-statistic: 16.32 on 6 and 65 DF,  p-value: 2.343e-11
 
 ``` r
 plot(bestLm)
@@ -585,7 +536,7 @@ lm2RMSE
 ```
 
     ##     RMSE 
-    ## 1817.582
+    ## 1681.991
 
 ### Fitting Random forest model
 
@@ -614,27 +565,27 @@ rfFit
 
     ## Random Forest 
     ## 
-    ## 73 samples
+    ## 72 samples
     ##  4 predictor
     ## 
     ## No pre-processing
     ## Resampling: Cross-Validated (10 fold, repeated 3 times) 
-    ## Summary of sample sizes: 66, 66, 66, 65, 66, 66, ... 
+    ## Summary of sample sizes: 65, 65, 65, 64, 65, 65, ... 
     ## Resampling results across tuning parameters:
     ## 
     ##   mtry  RMSE       Rsquared   MAE      
-    ##   1     1394.2730  0.6812036  1125.0535
-    ##   2     1054.3402  0.7288401   825.9939
-    ##   3      932.8283  0.7453844   691.8647
-    ##   4      899.8343  0.7525831   656.8654
-    ##   5      906.7537  0.7491820   660.9891
-    ##   6      927.6028  0.7399397   680.6086
-    ##   7      943.7690  0.7309883   689.6461
-    ##   8      971.8917  0.7146193   713.5777
-    ##   9      962.2592  0.7202426   705.3727
+    ##   1     1410.0506  0.8630892  1163.9390
+    ##   2      940.9595  0.8902487   751.1957
+    ##   3      785.8390  0.8888826   613.3976
+    ##   4      748.2639  0.8834927   582.0463
+    ##   5      745.1285  0.8762326   576.2661
+    ##   6      753.5182  0.8711256   577.6366
+    ##   7      752.6455  0.8703734   574.7440
+    ##   8      757.6500  0.8688150   577.6923
+    ##   9      753.6981  0.8694819   576.8804
     ## 
     ## RMSE was used to select the optimal model using the smallest value.
-    ## The final value used for the model was mtry = 4.
+    ## The final value used for the model was mtry = 5.
 
 ``` r
 rfPred <- predict(rfFit,  newdata = dplyr::select(bikeDataTestF,-cnt))
@@ -645,7 +596,7 @@ rfRMSE
 ```
 
     ##     RMSE 
-    ## 1898.186
+    ## 1940.515
 
 ### Fitted Boosted Tree Model
 
@@ -658,6 +609,8 @@ testing data set. Finally, the predictions was tested finding the RMSE,
 Rsquared, and MAE values
 
 ``` r
+set.seed(1)
+
 trCtrl <- trainControl(method = "repeatedcv", number = 10, repeats =3)
 set.seed(1)
 BoostFit <- train(cnt ~., data = bikeDataTrain,
@@ -670,38 +623,41 @@ BoostFit
 
     ## Stochastic Gradient Boosting 
     ## 
-    ## 73 samples
+    ## 72 samples
     ##  9 predictor
     ## 
     ## Pre-processing: centered (23), scaled (23) 
     ## Resampling: Cross-Validated (10 fold, repeated 3 times) 
-    ## Summary of sample sizes: 66, 66, 66, 65, 66, 66, ... 
+    ## Summary of sample sizes: 65, 65, 65, 64, 65, 65, ... 
     ## Resampling results across tuning parameters:
     ## 
     ##   interaction.depth  n.trees  RMSE      Rsquared   MAE     
-    ##   1                   50      459.5180  0.9455284  341.9216
-    ##   1                  100      443.8337  0.9462717  333.0820
-    ##   1                  150      448.5974  0.9469908  335.1811
-    ##   2                   50      468.5476  0.9459174  340.6554
-    ##   2                  100      465.1334  0.9462925  343.5862
-    ##   2                  150      462.6206  0.9462029  345.6756
-    ##   3                   50      463.2487  0.9439554  338.3608
-    ##   3                  100      454.2565  0.9453524  331.6865
-    ##   3                  150      462.7378  0.9444633  336.3771
+    ##   1                   50      449.8871  0.9581122  329.9190
+    ##   1                  100      427.4502  0.9589659  315.4090
+    ##   1                  150      425.0463  0.9591916  314.2318
+    ##   2                   50      457.9924  0.9546814  345.1025
+    ##   2                  100      448.3756  0.9558298  344.1261
+    ##   2                  150      440.2525  0.9571148  333.1095
+    ##   3                   50      451.9480  0.9566330  341.5727
+    ##   3                  100      442.4225  0.9568532  336.0311
+    ##   3                  150      443.3783  0.9565802  335.3010
     ## 
     ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
-    ## Tuning parameter 'n.minobsinnode' was held constant at a value of 10
+    ## Tuning
+    ##  parameter 'n.minobsinnode' was held constant at a value of 10
     ## RMSE was used to select the optimal model using the smallest value.
-    ## The final values used for the model were n.trees = 100, interaction.depth = 1, shrinkage = 0.1 and n.minobsinnode = 10.
+    ## The final values used for the model were n.trees = 150, interaction.depth = 1, shrinkage =
+    ##  0.1 and n.minobsinnode = 10.
 
 ``` r
 BoostFitPred <- predict(BoostFit, newdata = dplyr::select(bikeDataTest, -cnt))
 BoostFitPred
 ```
 
-    ##  [1] 1796.376 1814.840 1796.376 1637.937 1637.937 1656.402 1940.693 3059.908 3125.997 4469.759 4646.183 4209.239 3570.042 4357.330
-    ## [15] 4455.564 2320.455 3714.598 2920.701 1921.866 3704.963 3851.503 2892.064 3909.188 2860.992 6486.290 5410.098 5626.179 6819.978
-    ## [29] 5485.664 6093.469 6111.933 6592.948
+    ##  [1] 1937.014 1877.910 1946.804 1816.874 1877.910 1976.529 1883.345 1871.489 3254.064 3705.855
+    ## [11] 5234.323 4606.910 4475.820 3291.642 1980.583 2217.289 2027.872 3502.963 3930.892 4291.738
+    ## [21] 2188.817 4620.786 1938.296 4686.783 5868.222 5296.688 4611.468 7072.241 7196.599 7127.705
+    ## [31] 7208.220 4775.708
 
 ``` r
 bfRM <- postResample(BoostFitPred, bikeDataTest$cnt)
@@ -710,8 +666,8 @@ bfRMSE <- bfRM["RMSE"]
 bfRMSE
 ```
 
-    ##     RMSE 
-    ## 498.8638
+    ##    RMSE 
+    ## 469.274
 
 ``` r
 cRMSEsTitles <- c("Linear Regression Model","Liner Regression Model 2","Random Forest","Boosted Tree")
@@ -721,7 +677,7 @@ cRMSEs
 ```
 
     ##    lm.RMSE   lm2.RMSE    rf.RMSE boost.RMSE 
-    ##  4316.1148  1817.5824  1898.1863   498.8638
+    ##   4376.026   1681.991   1940.515    469.274
 
 ``` r
 bestCRMSE <- cRMSEsTitles[which.min(cRMSEs)]
