@@ -28,7 +28,7 @@ For this study we will be aiming to predict the number of bike users. The bike u
 * holiday (whether it is a holiday or not)
 * weathersit (weather: rainy, snowy, clear, cloudy)
 * mnth
-* atemp 
+* atemp (Feeling temperature)
 * windspeed
 
 
